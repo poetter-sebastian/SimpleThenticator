@@ -1,0 +1,35 @@
+{
+    "name": "sebastian/simplethenticator",
+    "description": "TOTP based on https://github.com/PHPGangsta/GoogleAuthenticator updated and reworked to php8.2 because of inactivity of the original creator.",
+    "minimum-stability": "stable",
+    "license": "BSD-2-Clause license",
+    "authors": [
+        {
+            "name": "Sebastian Poetter"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/poetter-sebastian/SimpleThenticator",
+        "issues": "https://github.com/poetter-sebastian/SimpleThenticator/issues"
+    },
+    "config": {
+        "optimize-autoloader": true
+    },
+    "require": {
+        "php": ">8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "psr-4": {
+        "src\\": "src/SimpleAuthenticator.php"
+    },
+    "autoload": {
+        "classmap": ["src/SimpleAuthenticator.php"]
+    },
+    "scripts": {
+        "build": "composer install --no-dev",
+        "build-dev": "composer install",
+        "test": "phpunit --colors=always --configuration=phpunit.xml"
+    }
+}
