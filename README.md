@@ -74,3 +74,7 @@ Run Tests:
 - All tests are inside [tests](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests) folder.
 - Execute `composer run-script build-dev` to install all dependencies
 - Execute `composer run-script test` to run all tests in the test folder
+
+Better library
+----------
+- For better code or complex implementations: please use [RobThree/TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth)!
