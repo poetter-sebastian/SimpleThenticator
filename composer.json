@@ -2,7 +2,7 @@
     "name": "sebastian/simplethenticator",
     "description": "TOTP based on https://github.com/PHPGangsta/GoogleAuthenticator updated and reworked to php8.2 because of inactivity of the original creator.",
     "minimum-stability": "stable",
-    "license": "BSD-2-Clause license",
+    "license": "BSD-2-Clause",
     "authors": [
         {
             "name": "Sebastian Poetter"
@@ -16,7 +16,7 @@
         "optimize-autoloader": true
     },
     "require": {
-        "php": ">8.2"
+        "php": ">=8.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.5"
