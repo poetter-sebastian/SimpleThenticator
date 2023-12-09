@@ -21,11 +21,11 @@
     "require-dev": {
         "phpunit/phpunit": "^10.5"
     },
-    "psr-4": {
-        "src\\": "src/SimpleAuthenticator.php"
-    },
     "autoload": {
-        "classmap": ["src/SimpleAuthenticator.php"]
+        "classmap": ["src/SimpleAuthenticator.php"],
+        "psr-4": {
+            "src\\": "src/SimpleAuthenticator.php"
+        }
     },
     "scripts": {
         "build": "composer install --no-dev",
