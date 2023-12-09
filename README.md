@@ -8,16 +8,12 @@
     <a href="LICENSE" target="_blank">
         <img alt="Software License" src="https://img.shields.io/badge/lisence-BSD_2_Clause-green?style=flat-square">
     </a>
-    <!--
-    <a href="https://codecov.io/gh/cakephp/poetter-sebastian/SimpleThenticator/4.x" target="_blank">
-        <img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/cakephp/cakephp?style=flat-square">
+    <a href="https://packagist.org/packages/sebastiandevs/simplethenticator" target="_blank">
+        <img alt="Total Downloads" src="https://img.shields.io/packagist/dt/sebastiandevs/simplethenticator.svg?style=flat-square">
     </a>
-    <a href="https://packagist.org/packages/poetter-sebastian/SimpleThenticator" target="_blank">
-        <img alt="Total Downloads" src="https://img.shields.io/packagist/dt/poetter-sebastian/SimpleThenticator.svg?style=flat-square">
+    <a href="https://packagist.org/packages/sebastiandevs/simplethenticator" target="_blank">
+        <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/sebastiandevs/simplethenticator.svg?style=flat-square&label=stable">
     </a>
-    <a href="https://packagist.org/packages/poetter-sebastian/SimpleThenticator" target="_blank">
-        <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/poetter-sebastian/SimpleThenticator.svg?style=flat-square&label=stable">
-    </a>-->
 </p>
 
 This class can generate secrets, generate codes, validate codes and present a QR-Code for scanning the secret. It implements TOTP
