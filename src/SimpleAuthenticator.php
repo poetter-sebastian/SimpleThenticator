@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace src;
+namespace SebastianDevs;
 
-use Random\RandomException;
 use Exception;
 use ValueError;
 
@@ -35,7 +34,7 @@ class SimpleAuthenticator
 
         if($this->codeLength < 6)
         {
-            throw new Exception("Code is less then 6");
+            throw new ValueError("Code is less then 6");
         }
 
         if(!in_array(strtolower($this->alg), hash_hmac_algos()))
@@ -126,7 +125,7 @@ class SimpleAuthenticator
             ($this->alg != 'SHA1' ? '&algorithm='.$this->alg : '') .
             (!is_null($issuer) ? '&issuer=' . $issuer : ''));
 
-        return "https://api.qrserver.com/v1/create-qr-code/?data=$urlencoded&size={$width}x{$height}&ecc=$ecc";
+        return "https://api.qrserver.com/v1/create-qr-code/?data=$urlencoded&size={$width}x$height&ecc=$ecc";
     }
 
     /**
@@ -141,10 +140,7 @@ class SimpleAuthenticator
      */
     public function verifyCode(string $secret, string $code, int $discrepancy = 1, int $currentTimeSlice = null): bool
     {
-        if ($currentTimeSlice === null)
-        {
-            $currentTimeSlice = floor(time() / 30);
-        }
+        $currentTimeSlice = $currentTimeSlice ?? floor(time() / 30);
 
         if (strlen($code) != $this->codeLength)
         {
@@ -225,7 +221,6 @@ class SimpleAuthenticator
      * @param int $secretLength
      *
      * @return string
-     * @throws RandomException
      * @throws Exception
      */
     public static function createSecret(int $secretLength = 32): string
