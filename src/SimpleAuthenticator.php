@@ -164,9 +164,9 @@ class SimpleAuthenticator
      *
      * @param $secret
      *
-     * @return bool|string
+     * @return string
      */
-    protected function base32Decode($secret): bool|string
+    protected function base32Decode($secret): string
     {
         if (empty($secret))
         {
@@ -180,14 +180,14 @@ class SimpleAuthenticator
         $allowedValues = array(6, 4, 3, 1, 0);
         if (!in_array($paddingCharCount, $allowedValues))
         {
-            return false;
+            return '';
         }
         for ($i = 0; $i < 4; ++$i)
         {
             if ($paddingCharCount == $allowedValues[$i] &&
                 substr($secret, -($allowedValues[$i])) != str_repeat($base32chars[32], $allowedValues[$i]))
             {
-                return false;
+                return '';
             }
         }
         $secret = str_replace('=', '', $secret);
@@ -198,7 +198,7 @@ class SimpleAuthenticator
             $x = '';
             if (!in_array($secret[$i], $base32chars))
             {
-                return false;
+                return '';
             }
             for ($j = 0; $j < 8; ++$j)
             {
