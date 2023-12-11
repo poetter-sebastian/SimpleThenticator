@@ -1,9 +1,13 @@
 <?php
 declare(strict_types=1);
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use src\SimpleAuthenticator;
+use SebastianDevs\SimpleAuthenticator;
 
+#[CoversClass(SimpleAuthenticator::class)]
+#[UsesClass(SimpleAuthenticator::class)]
 class SimpleAuthenticatorTest extends TestCase
 {
     /**
@@ -38,6 +42,7 @@ class SimpleAuthenticatorTest extends TestCase
 
     public function testGenerator()
     {
+        ob_start();
         $auth = new SimpleAuthenticator();
         try
         {
@@ -46,17 +51,26 @@ class SimpleAuthenticatorTest extends TestCase
         catch (Exception $e)
         {
             echo $e->getMessage();
-            exit();
+            $this->fail();
         }
         echo "Secret is: ".$secret."\n\n";
 
-        $qrCodeUrl = $auth->getQRCodeGoogleUrl($secret, 'Testo@test.test', 'Vintage Story');
+        $qrCodeUrl = $auth->getQRCodeGoogleUrl($secret, 'Testo@test.test', 'Company');
         echo "Google Charts URL for the QR-Code: ".$qrCodeUrl."\n\n";
 
         $oneCode = $auth->getCode($secret);
         echo "Checking Code '$oneCode' and Secret '$secret':\n";
 
+        ob_end_clean();
+
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
+    }
+
+    public function testConstructorException()
+    {
+        $this->expectException(ValueError::class);
+        $auth = new SimpleAuthenticator(0);
+        $secret = $auth->createSecret(0);
     }
 
     public function testCreateSecretTooLowSecret()
@@ -168,6 +182,36 @@ class SimpleAuthenticatorTest extends TestCase
 
         $code = '0'.$code;
         $result = $auth->verifyCode($secret, $code);
+        $this->assertFalse($result);
+    }
+
+    public function testVerifyCodeWithWrongCode()
+    {
+        $auth = new SimpleAuthenticator();
+
+        $secret = 'SECRET';
+        $code = "000000";
+        $result = $auth->verifyCode($auth->getCode($secret), $code);
+        $this->assertFalse($result);
+    }
+
+    public function testEmptySecret()
+    {
+        $auth = new SimpleAuthenticator();
+
+        $secret = '';
+        $code = "000000";
+        $result = $auth->verifyCode($auth->getCode($secret), $code);
+        $this->assertFalse($result);
+    }
+
+    public function testLongerUserKey()
+    {
+        $auth = new SimpleAuthenticator();
+
+        $secret = '';
+        $code = "00000000";
+        $result = $auth->verifyCode($auth->getCode($secret), $code);
         $this->assertFalse($result);
     }
 

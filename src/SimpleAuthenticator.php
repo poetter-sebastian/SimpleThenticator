@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace src;
+namespace SebastianDevs;
 
-use Random\RandomException;
 use Exception;
 use ValueError;
 
@@ -35,7 +34,7 @@ class SimpleAuthenticator
 
         if($this->codeLength < 6)
         {
-            throw new Exception("Code is less then 6");
+            throw new ValueError("Code is less then 6");
         }
 
         if(!in_array(strtolower($this->alg), hash_hmac_algos()))
@@ -126,7 +125,7 @@ class SimpleAuthenticator
             ($this->alg != 'SHA1' ? '&algorithm='.$this->alg : '') .
             (!is_null($issuer) ? '&issuer=' . $issuer : ''));
 
-        return "https://api.qrserver.com/v1/create-qr-code/?data=$urlencoded&size={$width}x{$height}&ecc=$ecc";
+        return "https://api.qrserver.com/v1/create-qr-code/?data=$urlencoded&size={$width}x$height&ecc=$ecc";
     }
 
     /**
@@ -141,10 +140,7 @@ class SimpleAuthenticator
      */
     public function verifyCode(string $secret, string $code, int $discrepancy = 1, int $currentTimeSlice = null): bool
     {
-        if ($currentTimeSlice === null)
-        {
-            $currentTimeSlice = floor(time() / 30);
-        }
+        $currentTimeSlice = $currentTimeSlice ?? floor(time() / 30);
 
         if (strlen($code) != $this->codeLength)
         {
@@ -168,9 +164,9 @@ class SimpleAuthenticator
      *
      * @param $secret
      *
-     * @return bool|string
+     * @return string
      */
-    protected function base32Decode($secret): bool|string
+    protected function base32Decode($secret): string
     {
         if (empty($secret))
         {
@@ -184,14 +180,14 @@ class SimpleAuthenticator
         $allowedValues = array(6, 4, 3, 1, 0);
         if (!in_array($paddingCharCount, $allowedValues))
         {
-            return false;
+            return '';
         }
         for ($i = 0; $i < 4; ++$i)
         {
             if ($paddingCharCount == $allowedValues[$i] &&
                 substr($secret, -($allowedValues[$i])) != str_repeat($base32chars[32], $allowedValues[$i]))
             {
-                return false;
+                return '';
             }
         }
         $secret = str_replace('=', '', $secret);
@@ -202,7 +198,7 @@ class SimpleAuthenticator
             $x = '';
             if (!in_array($secret[$i], $base32chars))
             {
-                return false;
+                return '';
             }
             for ($j = 0; $j < 8; ++$j)
             {
@@ -225,7 +221,6 @@ class SimpleAuthenticator
      * @param int $secretLength
      *
      * @return string
-     * @throws RandomException
      * @throws Exception
      */
     public static function createSecret(int $secretLength = 32): string
