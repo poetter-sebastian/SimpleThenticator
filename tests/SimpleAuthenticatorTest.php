@@ -42,6 +42,7 @@ class SimpleAuthenticatorTest extends TestCase
 
     public function testGenerator()
     {
+        ob_start();
         $auth = new SimpleAuthenticator();
         try
         {
@@ -50,7 +51,7 @@ class SimpleAuthenticatorTest extends TestCase
         catch (Exception $e)
         {
             echo $e->getMessage();
-            exit();
+            $this->fail();
         }
         echo "Secret is: ".$secret."\n\n";
 
@@ -59,6 +60,8 @@ class SimpleAuthenticatorTest extends TestCase
 
         $oneCode = $auth->getCode($secret);
         echo "Checking Code '$oneCode' and Secret '$secret':\n";
+
+        ob_end_clean();
 
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
     }
