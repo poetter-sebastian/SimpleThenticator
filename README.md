@@ -24,8 +24,9 @@ Example:
 
 Look at the function [TestGenerator()](https://github.com/poetter-sebastian/SimpleThenticator/blob/main/tests/SimpleAuthenticatorTest.php) in [tests](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests)
 
+(Other hash functions other than SHA1 only works for Google-Authenticator at the moment!)
 ```php
-$auth = new SimpleAuthenticator();
+$auth = new SimpleAuthenticator(6, "SHA1");
 try
 {
     $secret = $auth->createSecret();
