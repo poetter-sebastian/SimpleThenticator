@@ -26,7 +26,7 @@ Look at the function [TestGenerator()](https://github.com/poetter-sebastian/Simp
 
 (Other hash functions other than SHA1 only works for Google-Authenticator at the moment!)
 ```php
-$auth = new SimpleAuthenticator(6, "SHA1");
+$auth = new SimpleAuthenticator(6, 'SHA1');
 try
 {
     $secret = $auth->createSecret();
