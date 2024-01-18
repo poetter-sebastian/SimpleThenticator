@@ -36,13 +36,13 @@ catch (Exception $e)
     echo $e->getMessage();
     exit();
 }
-echo "Secret is: ".$secret."\n";
+echo 'Secret is: ' . $secret . '\n';
 
 $qrCodeUrl = $auth->getQRCodeGoogleUrl($secret, 'Testo@test.test', 'Business');
-echo "QR-Code: ".$qrCodeUrl."\n";
+echo 'QR-Code: ' . $qrCodeUrl . '\n';
 
 $oneCode = $auth->getCode($secret);
-echo "Checking Code '$oneCode' and Secret '$secret':\n";
+echo 'Checking Code ' . $oneCode . ' and Secret ' . $secret . ':\n';
 
 echo $auth->verifyCode($secret, $oneCode, 2)? 'OK': 'NOT OK';
 
