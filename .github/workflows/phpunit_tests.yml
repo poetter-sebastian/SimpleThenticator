@@ -48,7 +48,7 @@ jobs:
         php_extensions: "xdebug"
         coverage_clover: "coverage/clover.xml"
       env:
-        XDEBUG_MODE: coverage
+        XDEBUG_MODE: debug,coverage
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
