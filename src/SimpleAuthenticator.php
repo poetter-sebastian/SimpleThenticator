@@ -69,7 +69,7 @@ class SimpleAuthenticator
      *
      * @return string
      */
-    public function getCode(string $secret, float $timeSlice = null): string
+    public function getCode(string $secret, ?float $timeSlice = null): string
     {
         $timeSlice = $timeSlice ?? floor(time() / 30);
 
@@ -138,7 +138,7 @@ class SimpleAuthenticator
      *
      * @return bool
      */
-    public function verifyCode(string $secret, string $code, int $discrepancy = 1, int $currentTimeSlice = null): bool
+    public function verifyCode(string $secret, string $code, int $discrepancy = 1, ?int $currentTimeSlice = null): bool
     {
         $currentTimeSlice = $currentTimeSlice ?? floor(time() / 30);
 
