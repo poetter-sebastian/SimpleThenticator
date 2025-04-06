@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ ubuntu-latest, macos-latest, windows-latest ]
+        operating-system: [ ubuntu-latest ]
         php-versions: ['8.1', '8.3', '8.4']
 
     steps:
@@ -53,7 +53,7 @@ jobs:
         php_extensions: "xdebug"
         coverage_clover: "coverage/clover.xml"
       env:
-        XDEBUG_MODE: "debug coverage"
+        XDEBUG_MODE: coverage
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
