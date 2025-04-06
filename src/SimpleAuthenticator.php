@@ -176,6 +176,12 @@ class SimpleAuthenticator
         $base32chars = $this->getBase32LookupTable();
         $base32charsFlipped = array_flip($base32chars);
 
+        foreach (str_split($secret) as $char)
+        {
+            if (!isset($base32charsFlipped[$char]))
+                return '';
+        }
+
         $paddingCharCount = substr_count($secret, $base32chars[32]);
         $allowedValues = array(6, 4, 3, 1, 0);
         if (!in_array($paddingCharCount, $allowedValues))
