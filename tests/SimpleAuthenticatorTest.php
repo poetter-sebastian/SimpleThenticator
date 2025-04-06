@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SebastianDevs\SimpleAuthenticator;
@@ -149,6 +150,7 @@ class SimpleAuthenticatorTest extends TestCase
     /**
      * @dataProvider codeProvider
      */
+    #[DataProvider('codeProvider')]
     public function testGetCodeReturnsCorrectValues($secret, $timeSlice, $code)
     {
         $auth = new SimpleAuthenticator();
@@ -240,6 +242,7 @@ class SimpleAuthenticatorTest extends TestCase
      * @dataProvider paramsProvider
      * Thanks to https://github.com/PHPGangsta/GoogleAuthenticator/pull/41
      */
+    #[DataProvider('paramsProvider')]
     public function testGetQRCodeGoogleUrlReturnsCorrectUrlWithOptionalParameters($width, $height, $level, $expectedSize, $expectedLevel)
     {
         $auth = new SimpleAuthenticator();
