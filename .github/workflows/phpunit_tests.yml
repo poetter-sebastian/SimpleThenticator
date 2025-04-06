@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         operating-system: [ ubuntu-latest ]
-        php-versions: ['8.1', '8.2', '8.3', '8.4']
+        php-versions: ['8.1', '8.3', '8.4']
 
     steps:
     - uses: actions/checkout@v3
@@ -54,21 +54,6 @@ jobs:
         coverage_clover: "coverage/clover.xml"
       env:
         XDEBUG_MODE: coverage
-
-    - name: Make code coverage badge
-      uses: timkrase/phpunit-coverage-badge@v1.2.1
-      with:
-        coverage_badge_path: output/coverage.svg
-        push_badge: false
-
-    - name: Git push to image-data branch
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        publish_dir: ./output
-        publish_branch: image-data
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        user_name: 'github-actions[bot]'
-        user_email: 'github-actions[bot]@users.noreply.github.com'
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
