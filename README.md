@@ -8,16 +8,12 @@
     <a href="LICENSE" target="_blank">
         <img alt="Software License" src="https://img.shields.io/badge/lisence-BSD_2_Clause-green?style=flat-square">
     </a>
-    <!--
-    <a href="https://codecov.io/gh/cakephp/poetter-sebastian/SimpleThenticator/4.x" target="_blank">
-        <img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/cakephp/cakephp?style=flat-square">
+    <a href="https://packagist.org/packages/sebastiandevs/simplethenticator" target="_blank">
+        <img alt="Total Downloads" src="https://img.shields.io/packagist/dt/sebastiandevs/simplethenticator.svg?style=flat-square">
     </a>
-    <a href="https://packagist.org/packages/poetter-sebastian/SimpleThenticator" target="_blank">
-        <img alt="Total Downloads" src="https://img.shields.io/packagist/dt/poetter-sebastian/SimpleThenticator.svg?style=flat-square">
+    <a href="https://packagist.org/packages/sebastiandevs/simplethenticator" target="_blank">
+        <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/sebastiandevs/simplethenticator.svg?style=flat-square&label=stable">
     </a>
-    <a href="https://packagist.org/packages/poetter-sebastian/SimpleThenticator" target="_blank">
-        <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/poetter-sebastian/SimpleThenticator.svg?style=flat-square&label=stable">
-    </a>-->
 </p>
 
 This class can generate secrets, generate codes, validate codes and present a QR-Code for scanning the secret. It implements TOTP
@@ -28,8 +24,9 @@ Example:
 
 Look at the function [TestGenerator()](https://github.com/poetter-sebastian/SimpleThenticator/blob/main/tests/SimpleAuthenticatorTest.php) in [tests](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests)
 
+(Other hash functions other than SHA1 only works for Google-Authenticator at the moment!)
 ```php
-$auth = new SimpleAuthenticator();
+$auth = new SimpleAuthenticator(6, 'SHA1');
 try
 {
     $secret = $auth->createSecret();
@@ -39,13 +36,13 @@ catch (Exception $e)
     echo $e->getMessage();
     exit();
 }
-echo "Secret is: ".$secret."\n";
+echo 'Secret is: ' . $secret . '\n';
 
 $qrCodeUrl = $auth->getQRCodeGoogleUrl($secret, 'Testo@test.test', 'Business');
-echo "QR-Code: ".$qrCodeUrl."\n";
+echo 'QR-Code: ' . $qrCodeUrl . '\n';
 
 $oneCode = $auth->getCode($secret);
-echo "Checking Code '$oneCode' and Secret '$secret':\n";
+echo 'Checking Code ' . $oneCode . ' and Secret ' . $secret . ':\n';
 
 echo $auth->verifyCode($secret, $oneCode, 2)? 'OK': 'NOT OK';
 
@@ -78,3 +75,7 @@ Run Tests:
 - All tests are inside [tests](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests) folder.
 - Execute `composer run-script build-dev` to install all dependencies
 - Execute `composer run-script test` to run all tests in the test folder
+
+Better library:
+----------
+- For better code or complex implementations: please use [RobThree/TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth)!
