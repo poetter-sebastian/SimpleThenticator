@@ -1,6 +1,12 @@
 # Changelog
 
-[Full Changelog](https://github.com/poetter-sebastian/SimpleThenticator/commits/1.0)
+## [1.0.1](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.0.1) (2025-06-04)
+
+- Update README.md by @poetter-sebastian in https://github.com/poetter-sebastian/SimpleThenticator/pull/6
+- Better naming and testing by @poetter-sebastian in https://github.com/poetter-sebastian/SimpleThenticator/pull/7
+- Updated to PHPUnit 12 and PHP 8.4 by @poetter-sebastian in https://github.com/poetter-sebastian/SimpleThenticator/pull/9
+
+[Full Changelog](https://github.com/poetter-sebastian/SimpleThenticator/compare/1.0...1.0.1)
 
 ## [1.0.0](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.0) (2023-12-09)
 
@@ -18,3 +24,5 @@
 - Create php.yml
 - Added main code to the repository
 - Initial commit
+
+[Full Changelog](https://github.com/poetter-sebastian/SimpleThenticator/commits/1.0)
