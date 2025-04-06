@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SebastianDevs\SimpleAuthenticator;
@@ -66,6 +67,9 @@ class SimpleAuthenticatorTest extends TestCase
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testConstructorException()
     {
         $this->expectException(ValueError::class);
@@ -73,6 +77,9 @@ class SimpleAuthenticatorTest extends TestCase
         $secret = $auth->createSecret(0);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreateSecretTooLowSecret()
     {
         $this->expectException(ValueError::class);
@@ -80,6 +87,9 @@ class SimpleAuthenticatorTest extends TestCase
         $secret = $auth->createSecret(0);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreateSecretTooHighSecret()
     {
         $this->expectException(ValueError::class);
@@ -87,6 +97,9 @@ class SimpleAuthenticatorTest extends TestCase
         $secret = $auth->createSecret(99999);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreateSecretOnNull()
     {
         $auth = new SimpleAuthenticator(null);
@@ -99,12 +112,18 @@ class SimpleAuthenticatorTest extends TestCase
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function testCreateSecretWithWrongHashFunction()
     {
         $this->expectException(ValueError::class);
         $auth = new SimpleAuthenticator(6, 'DOGGO');
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreateSecretDefaultsToSixteenCharacters()
     {
         $auth = new SimpleAuthenticator();
@@ -113,6 +132,9 @@ class SimpleAuthenticatorTest extends TestCase
         $this->assertEquals(32, strlen($secret));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreateSecretLengthCanBeSpecified()
     {
         $auth = new SimpleAuthenticator();
@@ -128,6 +150,7 @@ class SimpleAuthenticatorTest extends TestCase
     /**
      * @dataProvider codeProvider
      */
+    #[DataProvider('codeProvider')]
     public function testGetCodeReturnsCorrectValues($secret, $timeSlice, $code)
     {
         $auth = new SimpleAuthenticator();
@@ -219,6 +242,7 @@ class SimpleAuthenticatorTest extends TestCase
      * @dataProvider paramsProvider
      * Thanks to https://github.com/PHPGangsta/GoogleAuthenticator/pull/41
      */
+    #[DataProvider('paramsProvider')]
     public function testGetQRCodeGoogleUrlReturnsCorrectUrlWithOptionalParameters($width, $height, $level, $expectedSize, $expectedLevel)
     {
         $auth = new SimpleAuthenticator();
@@ -236,5 +260,153 @@ class SimpleAuthenticatorTest extends TestCase
 
         $this->assertEquals($queryStringArray['size'], $expectedSize);
         $this->assertEquals($queryStringArray['ecc'], $expectedLevel);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testBase32DecodeWithValidSecret(): void
+    {
+        $secret = 'JBSWY3DPEHPK3PXP'; // Example valid base32 secret
+        $decoded = $this->invokeBase32Decode($secret);
+        $this->assertNotEmpty($decoded);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testBase32DecodeWithEmptySecret(): void
+    {
+        $secret = '';
+        $decoded = $this->invokeBase32Decode($secret);
+        $this->assertSame('', $decoded);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testBase32DecodeWithInvalidCharacters(): void
+    {
+        $secret = 'INVALIDBASE32?!';
+        $decoded = $this->invokeBase32Decode($secret);
+        $this->assertSame('', $decoded);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testBase32DecodeWithInvalidPaddingCount(): void
+    {
+        $secret = 'JBSWY3DPEHPK3PXP=='; // Invalid padding
+        $decoded = $this->invokeBase32Decode($secret);
+        $this->assertSame('', $decoded);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testBase32DecodeWithPaddingCharacters(): void
+    {
+        $secret = 'JBSWY3DPEHPK3PXP='; // Valid base32 secret with padding
+        $decoded = $this->invokeBase32Decode($secret);
+
+        // Check that the padding character is removed and the decoding is correct
+        $this->assertNotEmpty($decoded);
+        $this->assertIsString($decoded);
+
+        // Check the length of the decoded string
+        $this->assertEquals(10, strlen($decoded)); // Expected length based on the valid base32 secret
+    }
+
+    /**
+     * Test timingSafeEquals with identical strings
+     */
+    public function testTimingSafeEqualsIdenticalStrings()
+    {
+        $string1 = "testString";
+        $string2 = "testString";
+        $this->assertTrue(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with different strings of the same length
+     */
+    public function testTimingSafeEqualsDifferentStringsSameLength()
+    {
+        $string1 = "testString";
+        $string2 = "testStrung"; // One character different
+        $this->assertFalse(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with different strings of different lengths
+     */
+    public function testTimingSafeEqualsDifferentLengths()
+    {
+        $string1 = "testString";
+        $string2 = "testStr"; // Shorter length
+        $this->assertFalse(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with empty strings
+     */
+    public function testTimingSafeEqualsEmptyStrings()
+    {
+        $string1 = "";
+        $string2 = "";
+        $this->assertTrue(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with one empty string
+     */
+    public function testTimingSafeEqualsOneEmptyString()
+    {
+        $string1 = "testString";
+        $string2 = "";
+        $this->assertFalse(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with special characters
+     */
+    public function testTimingSafeEqualsSpecialCharacters()
+    {
+        $string1 = "test@String!";
+        $string2 = "test@String!";
+        $this->assertTrue(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with strings containing numeric characters
+     */
+    public function testTimingSafeEqualsNumericCharacters()
+    {
+        $string1 = "1234567890";
+        $string2 = "1234567890";
+        $this->assertTrue(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * Test timingSafeEquals with strings that have different casing
+     */
+    public function testTimingSafeEqualsDifferentCasing()
+    {
+        $string1 = "TestString";
+        $string2 = "teststring"; // Different casing
+        $this->assertFalse(SimpleAuthenticator::timingSafeEquals($string1, $string2));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function invokeBase32Decode(string $secret): string
+    {
+        $authenticator = new SimpleAuthenticator();
+        $reflection = new ReflectionClass($authenticator);
+        $method = $reflection->getMethod('base32Decode');
+        $method->setAccessible(true);
+        return $method->invoke($authenticator, $secret);
     }
 }

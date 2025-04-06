@@ -14,6 +14,9 @@
     <a href="https://packagist.org/packages/sebastiandevs/simplethenticator" target="_blank">
         <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/sebastiandevs/simplethenticator.svg?style=flat-square&label=stable">
     </a>
+    <a href="https://github.com/poetter-sebastian/SimpleThenticator/actions/workflows/phpunit_tests.yml" target="_blank">
+        <img alt="Latest Stable Version" src="https://github.com/poetter-sebastian/SimpleThenticator/actions/workflows/phpunit_tests.yml/badge.svg?branch=develop">
+    </a>
 </p>
 
 This class can generate secrets, generate codes, validate codes and present a QR-Code for scanning the secret. It implements TOTP

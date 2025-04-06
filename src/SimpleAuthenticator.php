@@ -69,7 +69,7 @@ class SimpleAuthenticator
      *
      * @return string
      */
-    public function getCode(string $secret, float $timeSlice = null): string
+    public function getCode(string $secret, ?float $timeSlice = null): string
     {
         $timeSlice = $timeSlice ?? floor(time() / 30);
 
@@ -138,7 +138,7 @@ class SimpleAuthenticator
      *
      * @return bool
      */
-    public function verifyCode(string $secret, string $code, int $discrepancy = 1, int $currentTimeSlice = null): bool
+    public function verifyCode(string $secret, string $code, int $discrepancy = 1, ?int $currentTimeSlice = null): bool
     {
         $currentTimeSlice = $currentTimeSlice ?? floor(time() / 30);
 
@@ -175,6 +175,12 @@ class SimpleAuthenticator
 
         $base32chars = $this->getBase32LookupTable();
         $base32charsFlipped = array_flip($base32chars);
+
+        foreach (str_split($secret) as $char)
+        {
+            if (!isset($base32charsFlipped[$char]))
+                return '';
+        }
 
         $paddingCharCount = substr_count($secret, $base32chars[32]);
         $allowedValues = array(6, 4, 3, 1, 0);
