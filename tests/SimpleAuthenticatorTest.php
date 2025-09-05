@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use SebastianDevs\SimpleAuthenticator;
 
 #[CoversClass(SimpleAuthenticator::class)]
-#[UsesClass(SimpleAuthenticator::class)]
-class SimpleAuthenticatorTest extends TestCase
+final class SimpleAuthenticatorTest extends TestCase
 {
     /**
      * @return array[] of parameters
@@ -103,11 +101,11 @@ class SimpleAuthenticatorTest extends TestCase
     public function testCreateSecretOnNull()
     {
         $auth = new SimpleAuthenticator(null);
-        $this->assertEquals(6, $auth->getCodeLength());
+        $this->assertEquals(6, $auth->codeLength);
         $this->assertEquals('SHA256', $auth->getAlgorithm());
 
         $auth = new SimpleAuthenticator(6, null);
-        $this->assertEquals(6, $auth->getCodeLength());
+        $this->assertEquals(6, $auth->codeLength);
         $this->assertEquals('SHA256', $auth->getAlgorithm());
     }
 
@@ -406,7 +404,6 @@ class SimpleAuthenticatorTest extends TestCase
         $authenticator = new SimpleAuthenticator();
         $reflection = new ReflectionClass($authenticator);
         $method = $reflection->getMethod('base32Decode');
-        $method->setAccessible(true);
         return $method->invoke($authenticator, $secret);
     }
 }
