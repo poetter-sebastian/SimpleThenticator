@@ -3,7 +3,6 @@
     "description": "TOTP based on https://github.com/PHPGangsta/GoogleAuthenticator updated and reworked to php8.2 because of inactivity of the original creator.",
     "keywords": ["TOTP","2FA", "2 factor authenticator library"],
     "homepage": "https://poetter-sebastian.github.io/",
-    "version": "1.1",
     "minimum-stability": "stable",
     "license": "BSD-2-Clause",
     "authors": [
