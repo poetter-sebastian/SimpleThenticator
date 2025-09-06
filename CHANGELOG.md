@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.1) (2025-09-06)
+
+- Dropped PHP 8.1 from supported versions
+- Fixed phpunit.xml of PHPUnit 12
+
 ## [1.0.1](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.0.1) (2025-06-04)
 
 - Update README.md by @poetter-sebastian in https://github.com/poetter-sebastian/SimpleThenticator/pull/6
