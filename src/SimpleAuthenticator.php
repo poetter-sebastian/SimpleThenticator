@@ -13,13 +13,17 @@ use ValueError;
  *
  * @package  sebastian/simplethenticator
  * @author   Sebatian Pötter
- * @version  1.0
+ * @version  1.1
  * @access   public
  * @see      https://github.com/poetter-sebastian/SimpleThenticator
  */
 class SimpleAuthenticator
 {
-    private int $codeLength;
+    public int $codeLength {
+        get {
+            return $this->codeLength;
+        }
+    }
     private string $alg;
 
     /**
@@ -44,15 +48,6 @@ class SimpleAuthenticator
     }
 
     /**
-     * Gets the used algorithm
-     * @return int
-     */
-    public function getCodeLength(): int
-    {
-        return $this->codeLength;
-    }
-
-    /**
      * Gets the set code length
      * @return string
      */
@@ -62,7 +57,7 @@ class SimpleAuthenticator
     }
 
     /**
-     * Calculate the code, with given secret and point in time.
+     * Calculate the code, with a given secret and point in time.
      *
      * @param string $secret
      * @param float|null $timeSlice
@@ -75,11 +70,11 @@ class SimpleAuthenticator
 
         $secretKey = self::base32Decode($secret);
 
-        // Pack time into binary string
+        // Pack time into a binary string
         $time = chr(0) . chr(0) . chr(0) . chr(0) . pack('N*', $timeSlice);
-        // Hash it with users secret key
+        // Hash it with users' secret key
         $hm = hash_hmac($this->alg, $time, $secretKey, true);
-        // Use last nipple of result as index/offset
+        // Use the last nipple of a result as index/offset
         $offset = ord(substr($hm, -1)) & 0x0F;
         // grab 4 bytes of the result
         $hashPart = substr($hm, $offset, 4);
@@ -133,7 +128,7 @@ class SimpleAuthenticator
      *
      * @param string $secret
      * @param string $code
-     * @param int $discrepancy This is the allowed time drift in 30 second units (8 means 4 minutes before or after)
+     * @param int $discrepancy This is the allowed time drift in 30-second units (8 means 4 minutes before or after)
      * @param int|null $currentTimeSlice time slice if we want to use other that time()
      *
      * @return bool
@@ -176,10 +171,8 @@ class SimpleAuthenticator
         $base32chars = $this->getBase32LookupTable();
         $base32charsFlipped = array_flip($base32chars);
 
-        foreach (str_split($secret) as $char)
-        {
-            if (!isset($base32charsFlipped[$char]))
-                return '';
+        if (array_any(str_split($secret), fn($char) => !isset($base32charsFlipped[$char]))) {
+            return '';
         }
 
         $paddingCharCount = substr_count($secret, $base32chars[32]);
@@ -193,7 +186,9 @@ class SimpleAuthenticator
             if ($paddingCharCount == $allowedValues[$i] &&
                 substr($secret, -($allowedValues[$i])) != str_repeat($base32chars[32], $allowedValues[$i]))
             {
+                // @codeCoverageIgnoreStart
                 return '';
+                // @codeCoverageIgnoreEnd
             }
         }
         $secret = str_replace('=', '', $secret);
@@ -204,7 +199,9 @@ class SimpleAuthenticator
             $x = '';
             if (!in_array($secret[$i], $base32chars))
             {
+                // @codeCoverageIgnoreStart
                 return '';
+                // @codeCoverageIgnoreEnd
             }
             for ($j = 0; $j < 8; ++$j)
             {
@@ -252,6 +249,7 @@ class SimpleAuthenticator
         {
             $rnd = random_bytes($secretLength);
         }
+        // @codeCoverageIgnoreStart
         elseif (function_exists('openssl_random_pseudo_bytes'))
         {
             $rnd = openssl_random_pseudo_bytes($secretLength, $cryptoStrong);
@@ -260,6 +258,7 @@ class SimpleAuthenticator
                 $rnd = '';
             }
         }
+        // @codeCoverageIgnoreEnd
         if (!empty($rnd))
         {
             for ($i = 0; $i < $secretLength; ++$i)
@@ -269,14 +268,17 @@ class SimpleAuthenticator
         }
         else
         {
+            // @codeCoverageIgnoreStart
+            // This should never happen!
             throw new Exception('No source of secure random');
+            // @codeCoverageIgnoreEnd
         }
 
         return $secret;
     }
 
     /**
-     * Get array with all 32 characters for decoding from/encoding to base32.
+     * Get an array with all 32 characters for decoding from/encoding to base32.
      *
      * @return string[]
      */
@@ -306,6 +308,7 @@ class SimpleAuthenticator
         {
             return hash_equals($safeString, $userString);
         }
+        // @codeCoverageIgnoreStart
         $safeLen = strlen($safeString);
         $userLen = strlen($userString);
 
@@ -323,5 +326,6 @@ class SimpleAuthenticator
 
         // They are only identical strings if $result is exactly 0...
         return $result === 0;
+        // @codeCoverageIgnoreEnd
     }
 }
