@@ -22,13 +22,20 @@
 This class can generate secrets, generate codes, validate codes and present a QR-Code for scanning the secret. It implements TOTP
 according to [RFC6238](https://tools.ietf.org/html/rfc6238)
 
+
+**Other hash functions other than SHA1 only work for Google-Authenticator at the moment!**
+
 Example:
 ------
 
 Look at the function [TestGenerator()](https://github.com/poetter-sebastian/SimpleThenticator/blob/main/tests/SimpleAuthenticatorTest.php) in [tests](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests)
 
-(Other hash functions other than SHA1 only works for Google-Authenticator at the moment!)
+Or use this [sample script](https://github.com/poetter-sebastian/SimpleThenticator/blob/main/sample/sample.php):
 ```php
+require_once('../src/SimpleAuthenticator.php');
+
+use SebastianDevs\SimpleAuthenticator;
+
 $auth = new SimpleAuthenticator(6, 'SHA1');
 try
 {
@@ -75,7 +82,7 @@ Installation:
 Run Tests:
 ----------
 
-- All tests are inside [tests](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests) folder.
+- All tests are inside the [tests folder](https://github.com/poetter-sebastian/SimpleThenticator/tree/main/tests).
 - Execute `composer run-script build-dev` to install all dependencies
 - Execute `composer run-script test` to run all tests in the test folder
 
