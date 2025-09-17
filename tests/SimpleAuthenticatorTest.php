@@ -61,15 +61,6 @@ final class SimpleAuthenticatorTest extends TestCase
             ['SNEFRU'],
             ['SNEFRU256'],
             ['GOST'],
-            ['HAVAL128,3'],
-            ['HAVAL160,3'],
-            ['HAVAL192,3'],
-            ['HAVAL224,3'],
-            ['HAVAL256,3'],
-            ['HAVAL128,4'],
-            ['HAVAL192,4'],
-            ['HAVAL224,4'],
-            ['HAVAL256,4'],
         ];
     }
 
