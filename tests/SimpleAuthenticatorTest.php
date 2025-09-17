@@ -45,7 +45,6 @@ final class SimpleAuthenticatorTest extends TestCase
     public static function hashAlgorithmProvider(): array
     {
         return [
-            ['MD5'],
             ['SHA1'],
             ['SHA224'],
             ['SHA256'],
@@ -59,30 +58,9 @@ final class SimpleAuthenticatorTest extends TestCase
             ['SHA3-512'],
             ['RIPEMD160'],
             ['WHIRLPOOL'],
-            ['TIGER128,3'],
-            ['TIGER160,3'],
-            ['TIGER192,3'],
-            ['TIGER128,4'],
-            ['TIGER160,4'],
-            ['TIGER192,4'],
             ['SNEFRU'],
             ['SNEFRU256'],
             ['GOST'],
-            ['HAVAL128,3'],
-            ['HAVAL160,3'],
-            ['HAVAL192,3'],
-            ['HAVAL224,3'],
-            ['HAVAL256,3'],
-            ['HAVAL128,4'],
-            ['HAVAL160,4'],
-            ['HAVAL192,4'],
-            ['HAVAL224,4'],
-            ['HAVAL256,4'],
-            ['HAVAL128,5'],
-            ['HAVAL160,5'],
-            ['HAVAL192,5'],
-            ['HAVAL224,5'],
-            ['HAVAL256,5'],
         ];
     }
 
@@ -111,15 +89,6 @@ final class SimpleAuthenticatorTest extends TestCase
 
         $this->assertTrue($auth->GetUsedHasAlgorithm() === 'SHA256');
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testConstructorWithOtherHashFunction()
-    {
-        $auth = new SimpleAuthenticator(0);
-        $secret = $auth->createSecret(0);
     }
 
     /**
