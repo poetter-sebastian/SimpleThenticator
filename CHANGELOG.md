@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.1.1) (2025-09-17)
+
+- Fixed compatibility issues of PHP 8.2 with newer features of PHP 8.4 (thanks for reporting it @ejellard in #12)
+
 ## [1.1](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.1) (2025-09-06)
 
 - Dropped PHP 8.1 from supported versions

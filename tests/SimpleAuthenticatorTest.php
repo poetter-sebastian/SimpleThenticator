@@ -39,6 +39,53 @@ final class SimpleAuthenticatorTest extends TestCase
         ];
     }
 
+    /**
+     * @return array[] of hash algorithm names
+     */
+    public static function hashAlgorithmProvider(): array
+    {
+        return [
+            ['MD5'],
+            ['SHA1'],
+            ['SHA224'],
+            ['SHA256'],
+            ['SHA384'],
+            ['SHA512'],
+            ['SHA512/224'],
+            ['SHA512/256'],
+            ['SHA3-224'],
+            ['SHA3-256'],
+            ['SHA3-384'],
+            ['SHA3-512'],
+            ['RIPEMD160'],
+            ['WHIRLPOOL'],
+            ['TIGER128,3'],
+            ['TIGER160,3'],
+            ['TIGER192,3'],
+            ['TIGER128,4'],
+            ['TIGER160,4'],
+            ['TIGER192,4'],
+            ['SNEFRU'],
+            ['SNEFRU256'],
+            ['GOST'],
+            ['HAVAL128,3'],
+            ['HAVAL160,3'],
+            ['HAVAL192,3'],
+            ['HAVAL224,3'],
+            ['HAVAL256,3'],
+            ['HAVAL128,4'],
+            ['HAVAL160,4'],
+            ['HAVAL192,4'],
+            ['HAVAL224,4'],
+            ['HAVAL256,4'],
+            ['HAVAL128,5'],
+            ['HAVAL160,5'],
+            ['HAVAL192,5'],
+            ['HAVAL224,5'],
+            ['HAVAL256,5'],
+        ];
+    }
+
     public function testGenerator()
     {
         ob_start();
@@ -62,7 +109,17 @@ final class SimpleAuthenticatorTest extends TestCase
 
         ob_end_clean();
 
+        $this->assertTrue($auth->GetUsedHasAlgorithm() === 'SHA256');
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testConstructorWithOtherHashFunction()
+    {
+        $auth = new SimpleAuthenticator(0);
+        $secret = $auth->createSecret(0);
     }
 
     /**
@@ -101,14 +158,29 @@ final class SimpleAuthenticatorTest extends TestCase
     public function testCreateSecretOnNull()
     {
         $auth = new SimpleAuthenticator(null);
-        $this->assertEquals(6, $auth->codeLength);
+        $this->assertEquals(6, $auth->GetCodeLength());
         $this->assertEquals('SHA256', $auth->getAlgorithm());
 
         $auth = new SimpleAuthenticator(6, null);
-        $this->assertEquals(6, $auth->codeLength);
+        $this->assertEquals(6, $auth->GetCodeLength());
         $this->assertEquals('SHA256', $auth->getAlgorithm());
     }
 
+    /**
+     * @throws Exception
+     */
+    #[DataProvider('hashAlgorithmProvider')]
+    public function testSupportedHashAlgorithm(string $algorithm)
+    {
+        $auth = new SimpleAuthenticator(6, $algorithm);
+        $this->assertEquals($algorithm, $auth->GetUsedHasAlgorithm());
+
+        $secret = 'SECRET';
+        $code = $auth->getCode($secret);
+        $result = $auth->verifyCode($secret, $code);
+
+        $this->assertTrue($result);
+    }
 
     /**
      * @throws Exception
@@ -145,10 +217,7 @@ final class SimpleAuthenticatorTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider codeProvider
-     */
-    #[DataProvider('codeProvider')]
+    #[DataProvider('codeProvider')] #[DataProvider('codeProvider')]
     public function testGetCodeReturnsCorrectValues($secret, $timeSlice, $code)
     {
         $auth = new SimpleAuthenticator();
@@ -237,10 +306,9 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
-     * @dataProvider paramsProvider
      * Thanks to https://github.com/PHPGangsta/GoogleAuthenticator/pull/41
      */
-    #[DataProvider('paramsProvider')]
+    #[DataProvider('paramsProvider')] #[DataProvider('paramsProvider')]
     public function testGetQRCodeGoogleUrlReturnsCorrectUrlWithOptionalParameters($width, $height, $level, $expectedSize, $expectedLevel)
     {
         $auth = new SimpleAuthenticator();
