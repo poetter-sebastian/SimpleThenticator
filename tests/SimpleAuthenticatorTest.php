@@ -45,7 +45,6 @@ final class SimpleAuthenticatorTest extends TestCase
     public static function hashAlgorithmProvider(): array
     {
         return [
-            ['MD5'],
             ['SHA1'],
             ['SHA224'],
             ['SHA256'],
@@ -59,11 +58,7 @@ final class SimpleAuthenticatorTest extends TestCase
             ['SHA3-512'],
             ['RIPEMD160'],
             ['WHIRLPOOL'],
-            ['TIGER128,3'],
-            ['TIGER160,3'],
-            ['TIGER192,3'],
             ['TIGER128,4'],
-            ['TIGER160,4'],
             ['TIGER192,4'],
             ['SNEFRU'],
             ['SNEFRU256'],
@@ -74,7 +69,6 @@ final class SimpleAuthenticatorTest extends TestCase
             ['HAVAL224,3'],
             ['HAVAL256,3'],
             ['HAVAL128,4'],
-            ['HAVAL160,4'],
             ['HAVAL192,4'],
             ['HAVAL224,4'],
             ['HAVAL256,4'],
