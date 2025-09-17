@@ -19,11 +19,7 @@ use ValueError;
  */
 class SimpleAuthenticator
 {
-    public int $codeLength {
-        get {
-            return $this->codeLength;
-        }
-    }
+    private int $codeLength;
     private string $alg;
 
     /**
@@ -43,8 +39,18 @@ class SimpleAuthenticator
 
         if(!in_array(strtolower($this->alg), hash_hmac_algos()))
         {
-            throw new ValueError("Hash function is not supported by hash_hmac");
+            throw new ValueError("Hash function $this->alg is not supported by hash_hmac");
         }
+    }
+
+    public function GetCodeLength(): int
+    {
+        return $this->codeLength;
+    }
+
+    public function GetUsedHasAlgorithm(): string
+    {
+        return $this->alg;
     }
 
     /**
@@ -171,8 +177,10 @@ class SimpleAuthenticator
         $base32chars = $this->getBase32LookupTable();
         $base32charsFlipped = array_flip($base32chars);
 
-        if (array_any(str_split($secret), fn($char) => !isset($base32charsFlipped[$char]))) {
-            return '';
+        foreach (str_split($secret) as $char)
+        {
+            if (!isset($base32charsFlipped[$char]))
+                return '';
         }
 
         $paddingCharCount = substr_count($secret, $base32chars[32]);
