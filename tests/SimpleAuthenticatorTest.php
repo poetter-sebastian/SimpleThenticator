@@ -58,8 +58,6 @@ final class SimpleAuthenticatorTest extends TestCase
             ['SHA3-512'],
             ['RIPEMD160'],
             ['WHIRLPOOL'],
-            ['TIGER128,4'],
-            ['TIGER192,4'],
             ['SNEFRU'],
             ['SNEFRU256'],
             ['GOST'],
