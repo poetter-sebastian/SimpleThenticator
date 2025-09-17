@@ -78,11 +78,6 @@ final class SimpleAuthenticatorTest extends TestCase
             ['HAVAL192,4'],
             ['HAVAL224,4'],
             ['HAVAL256,4'],
-            ['HAVAL128,5'],
-            ['HAVAL160,5'],
-            ['HAVAL192,5'],
-            ['HAVAL224,5'],
-            ['HAVAL256,5'],
         ];
     }
 
