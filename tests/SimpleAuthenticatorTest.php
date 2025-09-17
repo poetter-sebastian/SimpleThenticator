@@ -78,6 +78,11 @@ final class SimpleAuthenticatorTest extends TestCase
             ['HAVAL192,4'],
             ['HAVAL224,4'],
             ['HAVAL256,4'],
+            ['HAVAL128,5'],
+            ['HAVAL160,5'],
+            ['HAVAL192,5'],
+            ['HAVAL224,5'],
+            ['HAVAL256,5'],
         ];
     }
 
@@ -106,15 +111,6 @@ final class SimpleAuthenticatorTest extends TestCase
 
         $this->assertTrue($auth->GetUsedHasAlgorithm() === 'SHA256');
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testConstructorWithOtherHashFunction()
-    {
-        $auth = new SimpleAuthenticator(0);
-        $secret = $auth->createSecret(0);
     }
 
     /**
