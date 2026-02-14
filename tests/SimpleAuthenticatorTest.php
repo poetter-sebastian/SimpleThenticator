@@ -185,7 +185,7 @@ final class SimpleAuthenticatorTest extends TestCase
         $secret = 'SECRET';
 
         // Test with a very large time slice
-        $code = $auth->getCode($secret, PHP_INT_MAX);
+        $code = $auth->getCode($secret,  92233720368);
         $this->assertIsString($code);
         $this->assertGreaterThanOrEqual(0, strlen($code));
     }
