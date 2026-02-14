@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.2) (2026-02-14)
+- Enhanced unit tests with additional boundary condition testing
+- Added tests for maximum code length validation
+- Added tests for maximum secret length validation
+- Added edge case testing for time slice boundary conditions
+- Added comprehensive testing for timing-safe comparison with long strings
+- Added tests for code length consistency across different hash algorithms
+- Added tests for all supported hash algorithms
+- Fixed validation of code and secret length parameters
+- Removed doubled tests
+- deprecated getAlgorithm() function
+
 ## [1.1.1](https://github.com/poetter-sebastian/SimpleThenticator/releases/tag/1.1.1) (2025-09-17)
 
 - Fixed compatibility issues of PHP 8.2 with newer features of PHP 8.4 (thanks for reporting it @ejellard in #12)

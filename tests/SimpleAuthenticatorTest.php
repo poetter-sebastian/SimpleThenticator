@@ -87,11 +87,12 @@ final class SimpleAuthenticatorTest extends TestCase
 
         ob_end_clean();
 
-        $this->assertTrue($auth->GetUsedHasAlgorithm() === 'SHA256');
+        $this->assertTrue($auth->getUsedHasAlgorithm() === 'SHA256');
         $this->assertTrue($auth->verifyCode($secret, $oneCode, 2));
     }
 
     /**
+     * Tests if code length is too low
      * @throws Exception
      */
     public function testConstructorException()
@@ -102,6 +103,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Tests if secret is too low
      * @throws Exception
      */
     public function testCreateSecretTooLowSecret()
@@ -112,6 +114,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Tests if secret is too high
      * @throws Exception
      */
     public function testCreateSecretTooHighSecret()
@@ -122,27 +125,112 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test maximum code length validation
+     * @throws Exception
+     */
+    public function testMaximumCodeLengthValidation(): void
+    {
+        $this->expectException(ValueError::class);
+        $auth = new SimpleAuthenticator(11);
+    }
+
+    /**
+     * Test code generation with maximum length
+     * @throws Exception
+     */
+    public function testCodeGenerationWithMaximumLength(): void
+    {
+        $auth = new SimpleAuthenticator(10); // Maximum allowed length
+        $secret = $auth->createSecret();
+        $code = $auth->getCode($secret);
+        $this->assertEquals(10, strlen($code));
+    }
+
+    /**
+     * Test very long secret generation
+     */
+    public function testVeryLongSecretGeneration(): void
+    {
+        $auth = new SimpleAuthenticator();
+        $secret = $auth->createSecret(128); // Maximum allowed secret length
+        $this->assertEquals(128, strlen($secret));
+    }
+
+
+    /**
+     * Test boundary conditions for time slices
+     */
+    public function testTimeSliceBoundaryConditions(): void
+    {
+        $auth = new SimpleAuthenticator();
+        $secret = 'SECRET';
+
+        // Test with a valid time slice
+        $code = $auth->getCode($secret, 0);
+        $this->assertIsString($code);
+        $this->assertGreaterThanOrEqual(0, strlen($code));
+
+        // Test with a negative time slice
+        $code = $auth->getCode($secret, -100);
+        $this->assertIsString($code);
+    }
+
+
+    /**
+     * Test invalid time slice in getCode
+     */
+    public function testGetCodeWithInvalidTimeSlice(): void
+    {
+        $auth = new SimpleAuthenticator();
+        $secret = 'SECRET';
+
+        // Test with a very large time slice
+        $code = $auth->getCode($secret,  92233720368);
+        $this->assertIsString($code);
+        $this->assertGreaterThanOrEqual(0, strlen($code));
+    }
+
+    /**
+     * Test null behavior
      * @throws Exception
      */
     public function testCreateSecretOnNull()
     {
         $auth = new SimpleAuthenticator(null);
         $this->assertEquals(6, $auth->GetCodeLength());
-        $this->assertEquals('SHA256', $auth->getAlgorithm());
+        $this->assertEquals('SHA256', $auth->getUsedHasAlgorithm());
 
         $auth = new SimpleAuthenticator(6, null);
         $this->assertEquals(6, $auth->GetCodeLength());
-        $this->assertEquals('SHA256', $auth->getAlgorithm());
+        $this->assertEquals('SHA256', $auth->getUsedHasAlgorithm());
     }
 
     /**
+     * Test edge case for timing safe equals with maximum string length
+     */
+    public function testTimingSafeEqualsWithMaximumStringLength(): void
+    {
+        $longString = str_repeat('A', 1000);
+        $this->assertTrue(SimpleAuthenticator::timingSafeEquals($longString, $longString));
+        $differentString = str_repeat('B', 1000);
+        $this->assertFalse(SimpleAuthenticator::timingSafeEquals($longString, $differentString));
+    }
+
+    /**
+     * Test only usable hash algorithm
      * @throws Exception
      */
     #[DataProvider('hashAlgorithmProvider')]
     public function testSupportedHashAlgorithm(string $algorithm)
     {
+        if (!in_array($algorithm, SimpleAuthenticator::supportedHashAlgorithms(), true)) {
+            $this->expectException(ValueError::class);
+            $auth = new SimpleAuthenticator(6, $algorithm);
+        }
+
         $auth = new SimpleAuthenticator(6, $algorithm);
-        $this->assertEquals($algorithm, $auth->GetUsedHasAlgorithm());
+
+        $this->assertEquals($algorithm, $auth->getUsedHasAlgorithm());
 
         $secret = 'SECRET';
         $code = $auth->getCode($secret);
@@ -152,6 +240,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test specific not existing hash algorithm
      * @throws Exception
      */
     public function testCreateSecretWithWrongHashFunction()
@@ -161,6 +250,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test default secret creation
      * @throws Exception
      */
     public function testCreateSecretDefaultsToSixteenCharacters()
@@ -172,6 +262,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test specified secret length
      * @throws Exception
      */
     public function testCreateSecretLengthCanBeSpecified()
@@ -186,7 +277,10 @@ final class SimpleAuthenticatorTest extends TestCase
         }
     }
 
-    #[DataProvider('codeProvider')] #[DataProvider('codeProvider')]
+    /**
+     * Test specified secret, time, and code combinations
+     */
+    #[DataProvider('codeProvider')]
     public function testGetCodeReturnsCorrectValues($secret, $timeSlice, $code)
     {
         $auth = new SimpleAuthenticator();
@@ -194,6 +288,9 @@ final class SimpleAuthenticatorTest extends TestCase
         $this->assertEquals($code, $auth->getCode($secret, $timeSlice));
     }
 
+    /**
+     * Test URL generation behavior
+     */
     public function testGetQRCodeGoogleUrlReturnsCorrectUrl()
     {
         $auth = new SimpleAuthenticator();
@@ -214,6 +311,9 @@ final class SimpleAuthenticatorTest extends TestCase
         $this->assertEquals($queryStringArray['data'], $expectedChl);
     }
 
+    /**
+     * Test default code verification
+     */
     public function testVerifyCode()
     {
         $auth = new SimpleAuthenticator();
@@ -230,6 +330,9 @@ final class SimpleAuthenticatorTest extends TestCase
         $this->assertFalse($result);
     }
 
+    /**
+     * Test verification with a leading zero
+     */
     public function testVerifyCodeWithLeadingZero()
     {
         $auth = new SimpleAuthenticator();
@@ -244,6 +347,9 @@ final class SimpleAuthenticatorTest extends TestCase
         $this->assertFalse($result);
     }
 
+    /**
+     * Test wrong code check
+     */
     public function testVerifyCodeWithWrongCode()
     {
         $auth = new SimpleAuthenticator();
@@ -254,6 +360,9 @@ final class SimpleAuthenticatorTest extends TestCase
         $this->assertFalse($result);
     }
 
+    /**
+     * Test empty check
+     */
     public function testEmptySecret()
     {
         $auth = new SimpleAuthenticator();
@@ -264,6 +373,9 @@ final class SimpleAuthenticatorTest extends TestCase
         $this->assertFalse($result);
     }
 
+    /**
+     * Test too long code check
+     */
     public function testLongerUserKey()
     {
         $auth = new SimpleAuthenticator();
@@ -275,9 +387,10 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test optional parameters
      * Thanks to https://github.com/PHPGangsta/GoogleAuthenticator/pull/41
      */
-    #[DataProvider('paramsProvider')] #[DataProvider('paramsProvider')]
+    #[DataProvider('paramsProvider')]
     public function testGetQRCodeGoogleUrlReturnsCorrectUrlWithOptionalParameters($width, $height, $level, $expectedSize, $expectedLevel)
     {
         $auth = new SimpleAuthenticator();
@@ -298,6 +411,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test base-32 decoder
      * @throws ReflectionException
      */
     public function testBase32DecodeWithValidSecret(): void
@@ -308,6 +422,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test base-32 decoder on empty input
      * @throws ReflectionException
      */
     public function testBase32DecodeWithEmptySecret(): void
@@ -318,6 +433,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test base-32 decoder with invalide characters
      * @throws ReflectionException
      */
     public function testBase32DecodeWithInvalidCharacters(): void
@@ -328,6 +444,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test base-32 decoder with wrong padding
      * @throws ReflectionException
      */
     public function testBase32DecodeWithInvalidPaddingCount(): void
@@ -338,6 +455,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test base-32 decoder with correct padding
      * @throws ReflectionException
      */
     public function testBase32DecodeWithPaddingCharacters(): void
@@ -434,6 +552,7 @@ final class SimpleAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test base-32 decoder invocation
      * @throws ReflectionException
      */
     private function invokeBase32Decode(string $secret): string
