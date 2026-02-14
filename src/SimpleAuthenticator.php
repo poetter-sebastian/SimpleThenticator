@@ -13,7 +13,7 @@ use ValueError;
  *
  * @package  sebastian/simplethenticator
  * @author   Sebatian Pötter
- * @version  1.1
+ * @version  1.2
  * @access   public
  * @see      https://github.com/poetter-sebastian/SimpleThenticator
  */
@@ -23,43 +23,66 @@ class SimpleAuthenticator
     private string $alg;
 
     /**
-     * @param int|null $codeLength
-     * @param string|null $usedAlg
-     * @throws Exception
+     * @param int|null $codeLength Length between 6 and 10
+     * @param string|null $usedAlg Used hash algorithm 'SHA1', 'SHA256', 'SHA512'
+     * @throws Exception throws ValueError exception if $codeLength is smaller or grater then 10 or if the hash algorithm is not supported
      */
     public function __construct(?int $codeLength = 6, ?string $usedAlg = 'SHA256')
     {
         $this->codeLength = $codeLength ?? 6;
         $this->alg = $usedAlg ?? 'SHA256';
 
+        if (!in_array($this->alg, self::supportedHashAlgorithms(), true)) {
+            throw new ValueError('Hash algorithm not allowed. Use one of: ' . implode(', ', self::supportedHashAlgorithms()));
+        }
+
         if($this->codeLength < 6)
         {
             throw new ValueError("Code is less then 6");
         }
 
-        if(!in_array(strtolower($this->alg), hash_hmac_algos()))
+        if($this->codeLength > 10)
         {
+            throw new ValueError("Code is higher then 10");
+        }
+
+        // this should never happen!
+        if(!in_array(strtolower($this->alg), hash_hmac_algos(), true))
+        {
+            // @codeCoverageIgnoreStart
             throw new ValueError("Hash function $this->alg is not supported by hash_hmac");
+            // @codeCoverageIgnoreEnd
         }
     }
 
+    /**
+     * Gets the current code length
+     * @return int
+     */
     public function GetCodeLength(): int
     {
         return $this->codeLength;
     }
 
-    public function GetUsedHasAlgorithm(): string
+    /**
+     * Gets the set code length
+     * @return string returns the current used hash algorithm
+     */
+    public function getUsedHasAlgorithm(): string
     {
         return $this->alg;
     }
 
     /**
-     * Gets the set code length
-     * @return string
+     * Returns the current used hash algorithm
+     * @return string returns the current used hash algorithm
+     * @deprecated will be removed in the next version
      */
     public function getAlgorithm(): string
     {
-        return $this->alg;
+        // @codeCoverageIgnoreStart
+        return $this->getUsedHasAlgorithm();
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -76,8 +99,8 @@ class SimpleAuthenticator
 
         $secretKey = self::base32Decode($secret);
 
-        // Pack time into a binary string
-        $time = chr(0) . chr(0) . chr(0) . chr(0) . pack('N*', $timeSlice);
+        // Pack time into an 8-byte binary string (high 32-bit zero for current-era counters and after 2030 time)
+        $time = pack('N2', 0, $timeSlice);
         // Hash it with users' secret key
         $hm = hash_hmac($this->alg, $time, $secretKey, true);
         // Use the last nipple of a result as index/offset
@@ -86,11 +109,9 @@ class SimpleAuthenticator
         $hashPart = substr($hm, $offset, 4);
 
         // Unpack binary value
-        $value = unpack('N', $hashPart);
-        $value = $value[1];
-        // Only 32 bits
-        $value = $value & 0x7FFFFFFF;
+        $value = unpack('N', $hashPart)[1] & 0x7FFFFFFF;
 
+        // With codeLength <= 10 this stays within the safe integer range
         $modulo = pow(10, $this->codeLength);
 
         return str_pad((string)($value % $modulo), $this->codeLength, '0', STR_PAD_LEFT);
@@ -164,7 +185,6 @@ class SimpleAuthenticator
      * Helper class to decode base32.
      *
      * @param $secret
-     *
      * @return string
      */
     protected function base32Decode($secret): string
@@ -299,6 +319,15 @@ class SimpleAuthenticator
             'Y', 'Z', '2', '3', '4', '5', '6', '7', // 31
             '=',  // padding char
         ];
+    }
+
+    /**
+     * RFC6238 algorithms only
+     * @return string[] Returns the RFC6238 algorithms
+     */
+    public static function supportedHashAlgorithms(): array
+    {
+        return ['SHA1', 'SHA256', 'SHA512'];
     }
 
     /**
